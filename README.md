@@ -7,16 +7,17 @@ Tmux plugin that displaying current Kubernetes context, cluster, namespace and u
 
 ## Usage
 
-Place defined variable in `status-left`,`status-right` or `pane-border-format`:
-- `#{kube_context}` will be the current context name, fetched by `kubectl config current-context`
-- `#{kube_cluster}` will be the cluster name, defined in current context
-- `#{kube_namespace}` will be the namespace, defined in current context
-- `#{kube_user}` will be the user name, defined in current context
+Place defined variable in `status-left`, `status-right` or `pane-border-format`:
+- `#{kubectx_context}` will be the current context name, fetched by `kubectl config current-context`
+- `#{kubectx_cluster}` will be the cluster name, defined in current context
+- `#{kubectx_namespace}` will be the namespace, defined in current context
+- `#{kubectx_user}` will be the user name, defined in current context
+- `#{kubectx_full}` will be the full info (ctx name, cluster name, user name, namespace) about current context (see also [@kubectx-format](#kubectx-format))
 
 ### Example
 
 ```tmux
-set -g status-right '#[bg=blue]#{kube_context}:#[bg=red]#{kube_namespace}#[default]'
+set -g status-right '#[bg=blue]#{kubectx_context}:#[bg=red]#{kubectx_namespace}#[default]'
 ```
 
 ## Installation
@@ -35,7 +36,7 @@ Hit `prefix + I` to fetch the plugin and source it.
 
 Clone the repo:
 
-```bash
+```shell
 $ git clone https://github.com/tony-sol/tmux-kubectx ~/clone/path
 ```
 
@@ -47,7 +48,21 @@ run-shell ~/clone/path/kubectx.tmux
 
 Reload TMUX environment:
 
-```bash
+```shell
 # type this in terminal
 $ tmux source-file ~/.tmux.conf
+```
+
+## Configuration Options
+
+### @kubectx-format
+
+Template of `#{kubectx_full}` result. May contain following variables:
+- `%{context}` - context name
+- `%{cluster}` - cluster name
+- `%{namespace}` - namespace
+- `%{user}` - user name
+
+```tmux
+set -g @kubectx-format "%{context}/%{user}@%{cluster}:%{namespace}"
 ```
