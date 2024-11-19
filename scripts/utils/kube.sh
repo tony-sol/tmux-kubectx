@@ -6,8 +6,8 @@ _get_info() {
 	local context_info=$(command kubectl config view --output jsonpath="{.contexts[?(@.name==\"$context\")].context}")
 
 	local cluster=$(echo $context_info | grep -o '"cluster":"[^"]*' | grep -o '[^"]*$') # | yq '.cluster'
-	local namespace=$(echo $context_info | grep -o '"namespace":"[^"]*' | grep -o '[^"]*$') # | yq '.namespace'
-	local user=$(echo $context_info | grep -o '"user":"[^"]*' | grep -o '[^"]*$') # | yq '.user'
+	local namespace=$(echo $context_info | grep -o '"namespace":"[^"]*' | grep -o '[^"]*$' || echo 'default') # | yq '.namespace // "default"'
+	local user=$(echo $context_info | grep -o '"user":"[^"]*' | grep -o '[^"]*$' || echo 'default') # | yq '.user // "default"'
 
 	case "$1" in
 		"context")
