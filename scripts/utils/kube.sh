@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
-_get_info() {
+__get_info() {
 	local context=$(command kubectl config current-context 2>/dev/null)
+	[[ -z "$context" ]] && return
 
 	local context_info=$(command kubectl config view --output jsonpath="{.contexts[?(@.name==\"$context\")].context}")
 
 	local cluster=$(echo $context_info | grep -o '"cluster":"[^"]*' | grep -o '[^"]*$') # | yq '.cluster'
-	local namespace=$(echo $context_info | grep -o '"namespace":"[^"]*' | grep -o '[^"]*$' || echo 'default') # | yq '.namespace // "default"'
+	local namespace=$(echo $context_info | grep -o '"namespace":"[^"]*' | grep -o '[^"]*$') # | yq '.namespace'
 	local user=$(echo $context_info | grep -o '"user":"[^"]*' | grep -o '[^"]*$') # | yq '.user'
+
+	namespace="${namespace:-default}"
 
 	case "$1" in
 		"context")
@@ -23,27 +26,27 @@ _get_info() {
 			echo "$user"
 			;;
 		"")
-			echo "$context $cluster $namespace $user"
+			echo "$context#$cluster#$namespace#$user"
 			;;
 	esac
 }
 
 get_info() {
-	_get_info
+	__get_info
 }
 
 get_cluster() {
-	_get_info cluster
+	__get_info cluster
 }
 
 get_context() {
-	_get_info context
+	__get_info context
 }
 
 get_namespace() {
-	_get_info namespace
+	__get_info namespace
 }
 
 get_user() {
-	_get_info user
+	__get_info user
 }
