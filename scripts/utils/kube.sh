@@ -1,16 +1,28 @@
 #!/usr/bin/env bash
 
 __get_info() {
-	local context=$(command kubectl config current-context 2>/dev/null)
+	local context cluster namespace user
+	# @perf parsing KUBECONFIG as just yaml via yq is PROBABLY faster than kubectl calls
+	if command -v yq 2>&1 >/dev/null; then
+		IFS='#' read -r context cluster namespace user <<<"$(command yq \
+			--unwrapScalar '
+		.current-context as $context
+		| .contexts[]
+		| select(.name==$context)
+		| "\(.name)#\(.context.cluster)#\(.context.namespace // \"default\")#\(.context.user)"
+		' "${KUBECONFIG:-~/.kube/config}" 2>/dev/null)"
+	else
+		IFS='#' read -r context cluster namespace user <<<"$(command kubectl config view \
+			--minify \
+			--flatten \
+			--output go-template='
+		{{- $name := (index .contexts 0).name -}}
+		{{- with (index .contexts 0).context -}}
+		{{- $name }}#{{ .cluster }}#{{ or .namespace "default" }}#{{ .user -}}
+		{{- end -}}' 2>/dev/null)"
+	fi
+
 	[[ -z "$context" ]] && return
-
-	local context_info=$(command kubectl config view --output jsonpath="{.contexts[?(@.name==\"$context\")].context}")
-
-	local cluster=$(echo $context_info | grep -o '"cluster":"[^"]*' | grep -o '[^"]*$') # | yq '.cluster'
-	local namespace=$(echo $context_info | grep -o '"namespace":"[^"]*' | grep -o '[^"]*$') # | yq '.namespace'
-	local user=$(echo $context_info | grep -o '"user":"[^"]*' | grep -o '[^"]*$') # | yq '.user'
-
-	namespace="${namespace:-default}"
 
 	case "$1" in
 		"context")

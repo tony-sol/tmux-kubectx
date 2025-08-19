@@ -22,6 +22,10 @@ set -g status-right '#[bg=blue]#{kubectx_context}:#[bg=red]#{kubectx_namespace}#
 
 ## Installation
 
+Prerequisites:
+* [`bash`](https://www.gnu.org/software/bash/)
+* [`kubectl`](https://github.com/kubernetes/kubectl) or [`yq`](https://github.com/mikefarah/yq)
+
 ### With [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
 
 Add plugin to the list of TPM plugins in `.tmux.conf`:
