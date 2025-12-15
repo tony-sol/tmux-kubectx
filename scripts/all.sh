@@ -2,8 +2,8 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-source $CURRENT_DIR/utils/kube.sh
-source $CURRENT_DIR/utils/tmux.sh
+source "${CURRENT_DIR}/utils/kube.sh"
+source "${CURRENT_DIR}/utils/tmux.sh"
 
 main() {
 	local context cluster namespace user
