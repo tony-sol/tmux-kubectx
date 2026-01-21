@@ -7,12 +7,10 @@ source "${CURRENT_DIR}/utils/tmux.sh"
 
 main() {
 	local context cluster namespace user
-	IFS='#' read -r context cluster namespace user <<<"$(get_info)"
+	IFS='#' read -r context cluster namespace user <<<"$(PWD=$(get_tmux_message $pane_current_path) get_info)"
 	# empty context means, that `kubectl config current-context` returns
 	# "error: current-context is not set"
 	[[ -z $context ]] && return
-	# eval is literaly evil, so i won't use this
-	# eval echo $(get_tmux_option $kubectx_full_format)
 	get_tmux_option $kubectx_full_format | sed \
 		-e "s/%{context}/$context/" \
 		-e "s/%{cluster}/$cluster/" \
@@ -21,4 +19,3 @@ main() {
 }
 
 main
-
