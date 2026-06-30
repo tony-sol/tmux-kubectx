@@ -16,7 +16,7 @@ placeholders_to_scripts=(
 
 do_interpolation() {
 	local interpolated=$1
-	for assignment in ${placeholders_to_scripts[@]}; do
+	for assignment in "${placeholders_to_scripts[@]}"; do
 		# ${assignment%\/\/*} - remove from // til EOL
 		local placeholder="${assignment%\/\/*}"
 		# ${assignment#*\/\/} - remove from BOL til //

@@ -12,10 +12,10 @@ main() {
 	# "error: current-context is not set"
 	[[ -z $context ]] && return
 	get_tmux_option $kubectx_full_format | sed \
-		-e "s/%{context}/$context/" \
-		-e "s/%{cluster}/$cluster/" \
-		-e "s/%{namespace}/$namespace/" \
-		-e "s/%{user}/$user/"
+		-e "s#%{context}#$context#" \
+		-e "s#%{cluster}#$cluster#" \
+		-e "s#%{namespace}#$namespace#" \
+		-e "s#%{user}#$user#"
 }
 
 main
